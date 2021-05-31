@@ -1,0 +1,31 @@
+Resources:
+  S3Bucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      PolicyDocument:
+        Id: MyPolicy
+        Statement: 
+          - Effect: Allow
+            Principal: "*"
+            Action: s3:*Object
+            Resource: !Join 
+              - ''
+              - - 'arn:aws:s3:::'
+                - !Ref S3Bucket
+                - /*
+            Condition: 
+              StringEquals: 
+                aws:SourceVpc: vpc-f74fbf9c
+      Bucket: !Ref S3Bucket
+Outputs:
+  S3BucketURL:
+    Value: !Join 
+      - ''
+      - - 'https://'
+        - !GetAtt 
+          - S3Bucket
+          - DomainName
+    Description: Name of S3 bucket to hold website content
